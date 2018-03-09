@@ -18,7 +18,7 @@ fi
 ## Test for network availability
 while :
 do
-        ping -c 5 -w 10 192.168.7.1
+        ping -c 5 -w 10 8.8.8.8
         if [ $? -eq 0 ]; then
                 break
         fi
