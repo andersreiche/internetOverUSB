@@ -1,0 +1,39 @@
+#!/bin/bash
+# 
+# Author : Klaus Kolle
+#   Date : 2016 02 22
+# Purpose: Establishing connection to the Internet
+# and set the clock, which has no battery backup
+#
+ 
+echo "Starting the Internet-over-USB script"
+ 
+## Add a default gateway 
+/sbin/route add default gw 192.168.7.1
+grep -q 8.8.8.8 /etc/resolv.conf
+if [ "$?" -ne "0" ]; then
+        echo "nameserver 8.8.8.8" >> /etc/resolv.conf
+fi
+ 
+## Test for network availability
+while :
+do
+        ping -c 5 -w 10 192.168.7.1
+        if [ $? -eq 0 ]; then
+                break
+        fi
+done
+ 
+## Now we should be ready to set the clock from the net
+/usr/sbin/ntpdate -b -s -u dk.pool.ntp.org
+date
+
+echo none > /sys/class/leds/beaglebone\:green\:usr0/trigger
+echo none > /sys/class/leds/beaglebone\:green\:usr1/trigger
+echo none > /sys/class/leds/beaglebone\:green\:usr2/trigger
+echo none > /sys/class/leds/beaglebone\:green\:usr3/trigger
+echo 1 > /sys/class/leds/beaglebone\:green\:usr0/brightness
+echo 0 > /sys/class/leds/beaglebone\:green\:usr1/brightness
+echo 0 > /sys/class/leds/beaglebone\:green\:usr2/brightness
+echo 0 > /sys/class/leds/beaglebone\:green\:usr3/brightness
+echo "End of the settings script"
